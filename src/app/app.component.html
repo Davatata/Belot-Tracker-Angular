@@ -1,4 +1,37 @@
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+  <ul class="navbar-nav">
+    <li class="nav-item" *ngIf="!httpService.loggedIn">
+      <a class="nav-link" routerLink="/signin" routerLinkActive="active" >Sign In</a>
+    </li>
+    <li class="nav-item" *ngIf="!httpService.loggedIn">
+      <a class="nav-link" routerLink="/signup" routerLinkActive="active" >Sign Up</a>
+    </li>
+    <li class="nav-item" *ngIf="httpService.loggedIn">
+      <a class="nav-link" routerLink="/signin" (click)="logout()">Log Out</a>
+    </li>
+  </ul>
+</nav>
 <div class="container">
+  <div class="row">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<!-- 
+<div *ngIf="!(httpService.user | async)">
+  <input type="text" [(ngModel)]="email" placeholder="email">
+  <input type="password" [(ngModel)]="password" placeholder="password">
+
+  <button (click)="signup()" [disabled]="!email || !password">
+    Signup
+  </button>
+
+  <button (click)="login()" [disabled]="!email || !password">
+    Login
+  </button>
+</div> -->
+
+<!-- <div class="container">
   <div class="row">
     <div class="col-12">
       <h2 class="text-center">{{title}} is the title</h2>
@@ -8,7 +41,13 @@
 <div class="container">
   <div class="row">
     <div class="col-12">
-      <h2 class="text-left">{{title}}</h2>
+      <input type="text" name="params" id="params" #params>
+      <button class="btn btn-primary" (click)="getItems(params.value)">Get items</button>
+      <button class="btn btn-primary" (click)="postGame()">Post Game</button>
+      <div class="row">{{ game | async }}</div>
+      <div class="row" *ngFor="let item of list | async">
+          <div>{{item | json}}</div>
+      </div>
     </div>
   </div>
-</div>
+</div> -->
