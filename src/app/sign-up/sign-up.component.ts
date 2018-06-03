@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from "@angular/router";
 
 import { HttpServiceService } from '../http-service.service';
 
@@ -12,9 +13,18 @@ export class SignUpComponent implements OnInit {
   email: string;
   password: string;
 
-  constructor(private httpService: HttpServiceService) { }
+  constructor(private httpService: HttpServiceService,
+              private router: Router) { }
 
   ngOnInit() {
+    this.httpService.user.subscribe(user => {
+      if (user) {
+        console.log(`Logged in, user data: ${this.httpService.userDetails.email.split('@')[0]}`);
+        this.router.navigate(['home']);
+      } else {
+        console.log('Not logged in.');
+      }
+    });
   }
 
   signup() {

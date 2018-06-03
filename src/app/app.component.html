@@ -1,53 +1,72 @@
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-  <ul class="navbar-nav">
-    <li class="nav-item" *ngIf="!httpService.loggedIn">
-      <a class="nav-link" routerLink="/signin" routerLinkActive="active" >Sign In</a>
+<nav class="navbar  bg-dark navbar-dark">
+  <a class="navbar-brand text-white" routerLink="/home" >
+    <div *ngIf="httpService.isLoggedIn()">{{ (httpService.user | async)?.email.split('@')[0] }}</div>
+  </a>
+  <ul class="navbar-nav collapse ">
+    <li class="nav-item" *ngIf="!httpService.isLoggedIn()">
+      <a class="nav-link" 
+         role="button" 
+         routerLink="/signin" 
+         routerLinkActive="active" >Sign In</a>
     </li>
-    <li class="nav-item" *ngIf="!httpService.loggedIn">
-      <a class="nav-link" routerLink="/signup" routerLinkActive="active" >Sign Up</a>
-    </li>
-    <li class="nav-item" *ngIf="httpService.loggedIn">
-      <a class="nav-link" routerLink="/signin" (click)="logout()">Log Out</a>
-    </li>
+    <!-- <li class="nav-item" *ngIf="!httpService.loggedIn">
+      <a class="nav-link" 
+         role="button" 
+         routerLink="/signup" 
+         routerLinkActive="active" >Sign Up</a>
+    </li> -->
+    <div *ngIf="httpService.isLoggedIn()">
+      <li>
+        <!-- Example single danger button -->
+        <!-- <div class="">
+          <button type="button" class="btn btn-secondary dropdown-toggle" (click)="toggleDropdown()" aria-expanded="false">
+            Manage
+          </button>
+          <div class="dropdown-menu" *ngIf="dropDown" [ngStyle]="{'display': dropdownOpen()}">
+            <a class="dropdown-item" (click)="toggleDropdown()" >New game</a>
+            <a class="dropdown-item" (click)="toggleDropdown()" routerLink="/history"  >History</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" (click)="toggleDropdown(); toggleLog()">Log Out</a>
+          </div>
+        </div> -->
+        <button mat-button style="background:lightgray;" [matMenuTriggerFor]="menu">Manage</button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item>New game</button>
+          <button mat-menu-item routerLink="/history">History</button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="toggleLog()" style="color: red">Log out</button>
+        </mat-menu>
+      </li>
+    </div>
   </ul>
 </nav>
-<div class="container">
-  <div class="row">
-    <router-outlet></router-outlet>
-  </div>
-</div>
-
-<!-- 
-<div *ngIf="!(httpService.user | async)">
-  <input type="text" [(ngModel)]="email" placeholder="email">
-  <input type="password" [(ngModel)]="password" placeholder="password">
-
-  <button (click)="signup()" [disabled]="!email || !password">
-    Signup
-  </button>
-
-  <button (click)="login()" [disabled]="!email || !password">
-    Login
-  </button>
-</div> -->
-
-<!-- <div class="container">
-  <div class="row">
-    <div class="col-12">
-      <h2 class="text-center">{{title}} is the title</h2>
-    </div>
-  </div>
-</div>
-<div class="container">
-  <div class="row">
-    <div class="col-12">
-      <input type="text" name="params" id="params" #params>
-      <button class="btn btn-primary" (click)="getItems(params.value)">Get items</button>
-      <button class="btn btn-primary" (click)="postGame()">Post Game</button>
-      <div class="row">{{ game | async }}</div>
-      <div class="row" *ngFor="let item of list | async">
-          <div>{{item | json}}</div>
+<div class="container">      
+  <!-- Modal -->
+  <div class="modal" 
+        id="exampleModal" 
+        tabindex="-1" 
+        role="dialog" 
+        aria-labelledby="exampleModalLabel" 
+        aria-hidden="true"
+        [style.display]="confirmLogOut ? 'block' : 'none'">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Log out of the app now?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                  (click)="toggleLog()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                  (click)="toggleLog()">Cancel</button>
+          <button type="button" class="btn btn-danger"
+                  (click)="logout()">Confirm</button>
+        </div>
       </div>
     </div>
   </div>
-</div> -->
+
+  <router-outlet></router-outlet>
+</div>

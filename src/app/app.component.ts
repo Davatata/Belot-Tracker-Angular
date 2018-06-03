@@ -13,52 +13,31 @@ import { PostItem } from './models/postItemModel.model';
 export class AppComponent {
   private loading: boolean = false;
   private list: Observable<PostItem>;
+
   email: string;
   password: string;
+  page: string;
+  confirmLogOut: boolean = false;
+  dropDown: boolean = false;
+
 
   constructor(private httpService: HttpServiceService) {}
   
-  title = 'app';
-  game;
-  loggedIn = false;
-
-  logout() {
-    this.httpService.logout();
+  toggleLog() {
+    this.confirmLogOut = !this.confirmLogOut;
   }
 
-  // getItems(term:string) {
-  //   this.loading = true;
-  //   this.list = this.httpService.search(term);
-  // }
+  toggleDropdown() {
+    this.dropDown = !this.dropDown;
+  }
 
-  // postGame() {
-  //   let game = {
-  //     '1': {
-  //       'games': {
-  //         '1': {
-  //           'winner': 'teamDave',
-  //           'teams': {
-  //             'team1Name': 'teamDave',
-  //             'team2Name': 'teamDave',
-  //             'team1Score': 1000,
-  //             'team2Score': 500              
-  //           },
-  //           'hands': {
-  //             '1': {
-  //               'bet': 100,
-  //               'bettor': 'teamDave',
-  //               'suit': 'club',
-  //               'team1Score': 110,
-  //               'team2Score': 50,
-  //               'betAchieved': true
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  //   this.game = this.httpService.postGame(game);
-  // }
+  dropdownOpen() {
+    return this.dropDown ? 'block' : 'none';
+  }
 
+  logout() {
+    this.toggleLog(); 
+    this.httpService.logout();
+  }
   
 }

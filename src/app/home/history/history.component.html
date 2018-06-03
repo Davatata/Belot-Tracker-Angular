@@ -1,0 +1,57 @@
+<br>
+<!-- <button class="btn btn-primary" (click)="postGame()">Post game</button> -->
+  <!-- <button class="btn btn-primary" (click)="getGames()">Get games</button> -->
+  <button mat-raised-button color="primary" (click)="getGames()">Get games</button>
+
+  <br>
+  <br>
+  <!-- <table class="table table-dark">
+    <thead>
+      <tr>
+        <th scope="col">Team 1</th>
+        <th scope="col">Score</th>
+        <th scope="col">Team 2</th>
+        <th scope="col">Score</th>
+        <th *ngIf="editMode"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let game of games; let i = index">
+        <td>{{ game.value.teams.team1Name.slice(0,6) }}...</td>
+        <td>{{ game.value.teams.team1Score }}</td>
+        <td>{{ game.value.teams.team2Name.slice(0,6) }}...</td>
+        <td>{{ game.value.teams.team2Score }}</td>
+        <td *ngIf="editMode">
+          <button class="btn btn-danger" style="padding: .175rem .35rem;" (click)="deleteGame(i)">X</button>
+        </td>
+      </tr>
+    </tbody>
+  </table> -->
+
+  <table class="mat-table mat-elevation-z8">
+    <thead>
+      <tr class="mat-header-row">
+        <th class="mat-header-cell"> Team 1 </th>
+        <th class="mat-header-cell"> Score </th>
+        <th class="mat-header-cell"> Team 2 </th>
+        <th class="mat-header-cell"> Score </th>
+        <th class="mat-header-cell" *ngIf="editMode"></th>
+      </tr>
+      </thead>
+    <tbody>
+      <tr class="mat-row" *ngFor="let game of games; let i = index">
+        <!-- <td class="mat-cell">{{ game.value.teams.team1Name.slice(0,6) }}...</td>
+        <td class="mat-cell">{{ game.value.teams.team1Score }}</td>
+        <td class="mat-cell">{{ game.value.teams.team2Name.slice(0,6) }}...</td>
+        <td class="mat-cell">{{ game.value.teams.team2Score }}</td> -->
+
+        <td class="mat-cell">{{game.value.teams.team1Name}}</td>
+        <td class="mat-cell">{{game.value.teams.team1Score}}</td>
+        <td class="mat-cell">{{game.value.teams.team2Name}}</td>
+        <td class="mat-cell">{{game.value.teams.team2Score}}</td>
+        <td class="mat-cell" *ngIf="editMode">
+          <button mat-button color="warn" (click)="deleteGame(i)">X</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>

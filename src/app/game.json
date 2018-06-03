@@ -1,0 +1,10 @@
+{
+  "winner": "teamDave",
+  "teams": {
+    "team1Name": "teamDave",
+    "team2Name": "teamJack",
+    "team1Score": 1000,
+    "team2Score": 500
+  },
+  "hands":[]
+}
