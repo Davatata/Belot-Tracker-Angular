@@ -4,3 +4,7 @@
 .m-top {
   margin-top: calc(15vh);
 }
+
+*:focus {
+  outline: none !important;
+}

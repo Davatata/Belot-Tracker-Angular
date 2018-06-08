@@ -66,7 +66,9 @@ export class HomeComponent implements OnInit {
     );    
   }
 
-  
+  getUser() {
+    return this.httpService.user;
+  }
 
   
 

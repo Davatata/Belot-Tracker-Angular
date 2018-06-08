@@ -39,5 +39,13 @@ export class AppComponent {
     this.toggleLog(); 
     this.httpService.logout();
   }
+
+  isLoggedIn() {
+    return this.httpService.isLoggedIn();
+  }
+
+  getUser() {
+    return this.httpService.user;
+  }
   
 }
