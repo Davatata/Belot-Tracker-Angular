@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { HttpServiceService } from './http-service.service';
@@ -10,7 +10,7 @@ import { PostItem } from './models/postItemModel.model';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
   private loading: boolean = false;
   private list: Observable<PostItem>;
 
@@ -46,6 +46,10 @@ export class AppComponent {
 
   getUser() {
     return this.httpService.user;
+  }
+
+  ngOnDestroy() {
+    console.log('App closed');
   }
   
 }

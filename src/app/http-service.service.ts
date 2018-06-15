@@ -8,13 +8,13 @@ import { AngularFireDatabase, AngularFireList  } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from "firebase/app";
 
-import { PostItem } from "./models/postItemModel.model";
+// import { PostItem } from "./models/postItemModel.model";
 import { Game } from "./models/game.model";
-import { Hand } from "./models/hand.model";
-import { User } from "./models/user.model";
+// import { Hand } from "./models/hand.model";
+// import { User } from "./models/user.model";
 
 @Injectable()
-export class HttpServiceService {
+export class HttpServiceService implements OnDestroy {
 
   // games: Observable<any[]>;
   newGame;
@@ -22,27 +22,28 @@ export class HttpServiceService {
   userDetails: firebase.User = null;
   // loggedIn = false;
   token: string;
-  games: Observable<any[]> = null;
+  games: Observable<Game[]> = null;
   userId: string;
 
-  constructor(private http: HttpClient,
-              private router: Router, 
-              private firebaseAuth: AngularFireAuth,
-              private db: AngularFireDatabase) {
-                this.user = firebaseAuth.authState;
-                this.user.subscribe(
-                  (user) => {
-                    if (user) {
-                      this.userDetails = user;
-                      this.userId = user.uid;
-                      //console.log(this.userDetails);
-                    } else {
-                      this.userDetails = null;
-                      this.userId = null;
-                    }
-                  }
-                )
-              }
+  constructor(
+    private http: HttpClient,
+    private router: Router, 
+    private firebaseAuth: AngularFireAuth,
+    private db: AngularFireDatabase) {
+      this.user = firebaseAuth.authState;
+      this.user.subscribe(
+        (user) => {
+          if (user) {
+            this.userDetails = user;
+            this.userId = user.uid;
+            //console.log(this.userDetails);
+          } else {
+            this.userDetails = null;
+            this.userId = null;
+          }
+        }
+      )
+    }
 
   // apiRoot = 'https://jsonplaceholder.typicode.com/posts';
   dbRef = 'https://belot-tracker.firebaseio.com/';
@@ -55,6 +56,10 @@ export class HttpServiceService {
 
   postGame(game) {
     return this.http.post(this.dbRef + `games/${this.userId}.json`, game);
+  }
+
+  updateGame(game, gameId, index) {
+    return this.http.put(this.dbRef + `games/${this.userId}/${gameId}.json`, game);
   }
 
   isLoggedIn() {
@@ -71,7 +76,7 @@ export class HttpServiceService {
       .createUserWithEmailAndPassword(email, password)
       .then(value => {
         // this.loggedIn = true;
-        this.firebaseAuth.auth.currentUser.getToken()
+        this.firebaseAuth.auth.currentUser.getIdToken()
           .then(
             (token:string) => {
               this.token = token;
@@ -100,7 +105,7 @@ export class HttpServiceService {
       .signInWithEmailAndPassword(email, password)
       .then(value => {
         // this.loggedIn = true;
-        this.firebaseAuth.auth.currentUser.getToken()
+        this.firebaseAuth.auth.currentUser.getIdToken()
           .then(
             (token:string) => {
               this.token = token;
@@ -139,6 +144,10 @@ export class HttpServiceService {
   
   createUser(user) {
     return this.http.post(this.dbRef + 'users.json', user);
+  }
+
+  ngOnDestroy() {
+    // this.user.unsubscribe();
   }
 
 }

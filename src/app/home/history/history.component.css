@@ -7,6 +7,10 @@ table {
   width: 100%;
 }
 
+.dataRow:hover {
+  background-color: #eaeaea;
+}
+
 .example-form {
   min-width: 150px;
   max-width: 500px;

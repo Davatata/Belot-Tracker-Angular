@@ -1,5 +1,4 @@
 export interface Hand {
-  handId: number,
   bet: number,
   bettor: string,
   suit: string,
