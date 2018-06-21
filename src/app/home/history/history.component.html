@@ -10,7 +10,7 @@
   <mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="tabChange($event)">
     <mat-tab >
       <ng-template mat-tab-label>
-        <span >Games</span>
+        <span>Games</span>
       </ng-template>
       <table class="mat-table mat-elevation-z8">
         <thead>
@@ -24,16 +24,13 @@
           </thead>
         <tbody>
           <tr class="mat-row dataRow" *ngFor="let game of games; let i = index" 
-             (click)="openGame(game, i)"
-             style="cursor: pointer;">    
-            <td class="mat-cell" 
-            [style.background-color]=" false ? '#acffac' : 'none'"
-            >
-            {{game.value.teams.team1Name}}</td>
+              (click)="openGame(game, i)"
+              style="cursor: pointer;">    
+            <td class="mat-cell" [style.background-color]=" false ? '#acffac' : 'none'">
+              {{game.value.teams.team1Name}}</td>
             <td class="mat-cell">{{game.value.teams.team1Score}}</td>
-            <td class="mat-cell" 
-            [style.background-color]="false ? '#acffac' : 'none'">
-            {{game.value.teams.team2Name}}</td>
+            <td class="mat-cell" [style.background-color]="false ? '#acffac' : 'none'">
+              {{game.value.teams.team2Name}}</td>
             <td class="mat-cell">{{game.value.teams.team2Score}}</td>
             <td class="mat-cell" *ngIf="editMode">
               <button class="btn btn-sm btn-danger" (click)="deleteGame(i)">X</button>
@@ -52,12 +49,12 @@
             <th class="mat-header-cell">Bet</th>
             <th class="mat-header-cell">Bettor</th>
             <th class="mat-header-cell">Suit</th>
-            <th class="mat-header-cell">{{ team1 }}</th>
-            <th class="mat-header-cell">{{ team2 }}</th>
+            <th class="mat-header-cell">{{ currentGame.teams.team1Name }}</th>
+            <th class="mat-header-cell">{{ currentGame.teams.team2Name }}</th>
           </tr>
           </thead>
         <tbody>
-          <tr class="mat-row dataRow" *ngFor="let hand of hands; let i = index" 
+          <tr class="mat-row dataRow" *ngFor="let hand of currentGame.hands; let i = index" 
              style="cursor: pointer;"
              (click)="openHand(hand, i)">
     
@@ -71,8 +68,8 @@
             <td class="mat-cell"></td>
             <td class="mat-cell"></td>
             <td class="mat-cell"></td>
-            <td class="mat-cell">{{team1Total}}</td>
-            <td class="mat-cell">{{team2Total}}</td>
+            <td class="mat-cell">{{currentGame.teams.team1Score}}</td>
+            <td class="mat-cell">{{currentGame.teams.team2Score}}</td>
           </tr>
         </tbody>
       </table>
@@ -94,6 +91,7 @@
         Hand
       </ng-template>
       <br>
+      <!-- Form fields -->
         <mat-form-field class="example-form-field">
           <input matInput type="number" max="160" min="80" 
                  placeholder="Bet" [(ngModel)]="testHand.bet"
@@ -102,36 +100,67 @@
                   matSuffix mat-icon-button aria-label="Clear" (click)="testHand.bet=80;changed=true;">
             <mat-icon>close</mat-icon>
           </button>
-        </mat-form-field>            
+        </mat-form-field>   
+
         <mat-form-field class="example-form-field">
-            <!-- <input matInput type="text" placeholder="Bettor" [(ngModel)]="testHand.bettor"/> -->
             <mat-select placeholder="Bettor" [(ngModel)]="testHand.bettor" (change)="changed = true">
-              <mat-option [value]="team1">{{team1}}</mat-option>
-              <mat-option [value]="team2">{{team2}}</mat-option>
+              <mat-option [value]="currentGame.teams.team1Name">{{currentGame.teams.team1Name}}</mat-option>
+              <mat-option [value]="currentGame.teams.team2Name">{{currentGame.teams.team2Name}}</mat-option>
             </mat-select>
-        </mat-form-field>        
+        </mat-form-field>    
+
         <mat-form-field class="example-form-field">
           <!-- <input matInput type="text" placeholder="Suit" [(ngModel)]="testHand.suit"/> -->
           <mat-select placeholder="Suit" [(ngModel)]="testHand.suit" (change)="changed = true">
             <mat-option *ngFor="let suit of suits"  [value]="suit">{{suit}}</mat-option>
           </mat-select>
         </mat-form-field>
+
+        <mat-form-field class="example-form-field">
+          <input #nameInput1 matInput type="text" placeholder="Team 1" 
+                 [(ngModel)]="oldTeam1"
+                 (change)="changed=true"
+                 required />
+          <button mat-button *ngIf="oldTeam1" 
+                  matSuffix mat-icon-button aria-label="Clear" 
+                  (click)="oldTeam1='';changed=true;">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <mat-form-field class="example-form-field">
+          <input #nameInput2 matInput type="text" placeholder="Team 2" 
+                 [(ngModel)]="oldTeam2"
+                 (change)="changed=true"
+                 required />
+          <button mat-button *ngIf="oldTeam2" 
+                  matSuffix mat-icon-button aria-label="Clear" 
+                  (click)="oldTeam2='';changed=true;">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+
+
         <mat-form-field class="example-form-field">
           <input matInput type="number" max="160" min="0" 
-                 placeholder="{{team1}} Score" [(ngModel)]="testHand.team1Score" (change)="changed = true" />
+                 placeholder="{{currentGame.teams.team1Name}} Score" [(ngModel)]="testHand.team1Score" 
+                 (change)="updateTeamScores(1); changed = true"/>
           <button mat-button *ngIf="testHand.team1Score" 
                   matSuffix mat-icon-button aria-label="Clear" (click)="testHand.team1Score=0;changed=true;">
             <mat-icon>close</mat-icon>
           </button>
         </mat-form-field>
+
         <mat-form-field class="example-form-field">
           <input matInput type="number" max="160" min="0" 
-                 placeholder="{{team2}} Score" [(ngModel)]="testHand.team2Score" (change)="changed = true"/>
+                 placeholder="{{currentGame.teams.team2Name}} Score" [(ngModel)]="testHand.team2Score" 
+                 (change)="updateTeamScores(2); changed = true"/>
           <button mat-button *ngIf="testHand.team2Score" 
                   matSuffix mat-icon-button aria-label="Clear" (click)="testHand.team2Score=0;changed=true;">
             <mat-icon>close</mat-icon>
           </button>
         </mat-form-field>
+
         <br>
         <!-- <button mat-raised-button style="background-color: #8efa9f" (click)="saveChanges()">Save</button> -->
         <button mat-raised-button [disabled]="!changed" 

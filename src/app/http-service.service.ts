@@ -9,7 +9,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from "firebase/app";
 
 // import { PostItem } from "./models/postItemModel.model";
-import { Game } from "./models/game.model";
+// import { Game } from "./models/game.model";
 // import { Hand } from "./models/hand.model";
 // import { User } from "./models/user.model";
 
@@ -17,12 +17,12 @@ import { Game } from "./models/game.model";
 export class HttpServiceService implements OnDestroy {
 
   // games: Observable<any[]>;
-  newGame;
+  // newGame;
   user: Observable<firebase.User>;
   userDetails: firebase.User = null;
   // loggedIn = false;
   token: string;
-  games: Observable<Game[]> = null;
+  // games: Observable<Game[]> = null;
   userId: string;
 
   constructor(
@@ -42,7 +42,7 @@ export class HttpServiceService implements OnDestroy {
             this.userId = null;
           }
         }
-      )
+      );
     }
 
   // apiRoot = 'https://jsonplaceholder.typicode.com/posts';
@@ -125,7 +125,7 @@ export class HttpServiceService implements OnDestroy {
     this.firebaseAuth.auth.signOut();
     this.router.navigate(['signin']);
     this.userDetails = null;
-    this.games = null;
+    //this.games = null;
     // console.log(this.userDetails);
   }
 
