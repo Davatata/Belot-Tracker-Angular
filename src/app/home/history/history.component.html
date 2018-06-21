@@ -61,8 +61,8 @@
             <td class="mat-cell">{{hand.bet}}</td>
             <td class="mat-cell">{{hand.bettor}}</td>
             <td class="mat-cell">{{hand.suit}}</td>
-            <td class="mat-cell">{{hand.team1Score}}</td>
-            <td class="mat-cell">{{hand.team2Score}}</td>
+            <td class="mat-cell" [ngStyle]="getColors(hand, 1)">{{hand.team1Score}}</td>
+            <td class="mat-cell" [ngStyle]="getColors(hand, 2)">{{hand.team2Score}}</td>
           </tr>
           <tr class="mat-row">
             <td class="mat-cell"></td>
@@ -146,7 +146,8 @@
                  placeholder="{{currentGame.teams.team1Name}} Score" [(ngModel)]="testHand.team1Score" 
                  (change)="updateTeamScores(1); changed = true"/>
           <button mat-button *ngIf="testHand.team1Score" 
-                  matSuffix mat-icon-button aria-label="Clear" (click)="testHand.team1Score=0;changed=true;">
+                  matSuffix mat-icon-button aria-label="Clear" 
+                  (click)="testHand.team1Score=0;testHand.team2Score=162;changed=true;">
             <mat-icon>close</mat-icon>
           </button>
         </mat-form-field>
@@ -156,7 +157,8 @@
                  placeholder="{{currentGame.teams.team2Name}} Score" [(ngModel)]="testHand.team2Score" 
                  (change)="updateTeamScores(2); changed = true"/>
           <button mat-button *ngIf="testHand.team2Score" 
-                  matSuffix mat-icon-button aria-label="Clear" (click)="testHand.team2Score=0;changed=true;">
+                  matSuffix mat-icon-button aria-label="Clear" 
+                  (click)="testHand.team2Score=0;testHand.team1Score=162;changed=true;">
             <mat-icon>close</mat-icon>
           </button>
         </mat-form-field>

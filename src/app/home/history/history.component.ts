@@ -220,4 +220,20 @@ export class HistoryComponent implements OnInit {
     }
     this.currentGame.hands[handIndex].betAchieved = achieved;
   }
+
+  getColors(hand, teamNumber) {
+    let styles = {};
+    if (teamNumber === 1 && hand.bettor === this.currentGame.teams.team1Name) {
+      styles = {
+        'background-color': hand.team1Score >= hand.bet ? '#acffac' : '#ffacac'
+      }
+    } else if (teamNumber === 2 && hand.bettor === this.currentGame.teams.team2Name) {
+      styles = {
+        'background-color': hand.team2Score >= hand.bet ? '#acffac' : '#ffacac'
+      }
+    } else {
+      styles = { 'background-color': 'none'};
+    }
+    return styles;
+  }
 }
