@@ -118,24 +118,24 @@
 
         <mat-form-field class="example-form-field">
           <input #nameInput1 matInput type="text" placeholder="Team 1" 
-                 [(ngModel)]="oldTeam1"
+                 [(ngModel)]="currentGame.teams.team1Name"
                  (change)="changed=true"
                  required />
-          <button mat-button *ngIf="oldTeam1" 
+          <button mat-button *ngIf="currentGame.teams.team1Name" 
                   matSuffix mat-icon-button aria-label="Clear" 
-                  (click)="oldTeam1='';changed=true;">
+                  (click)="currentGame.teams.team1Name='';changed=true;">
             <mat-icon>close</mat-icon>
           </button>
         </mat-form-field>
 
         <mat-form-field class="example-form-field">
           <input #nameInput2 matInput type="text" placeholder="Team 2" 
-                 [(ngModel)]="oldTeam2"
+                 [(ngModel)]="currentGame.teams.team2Name"
                  (change)="changed=true"
                  required />
-          <button mat-button *ngIf="oldTeam2" 
+          <button mat-button *ngIf="currentGame.teams.team2Name" 
                   matSuffix mat-icon-button aria-label="Clear" 
-                  (click)="oldTeam2='';changed=true;">
+                  (click)="currentGame.teams.team2Name='';changed=true;">
             <mat-icon>close</mat-icon>
           </button>
         </mat-form-field>
