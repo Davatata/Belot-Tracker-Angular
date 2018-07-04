@@ -8,7 +8,7 @@ table {
 }
 
 .dataRow:hover {
-  background-color: #eaeaea;
+  background-color: #eeeeee;
 }
 
 .example-form {
@@ -23,4 +23,13 @@ table {
 
 .example-form-field {
   width: 29vw;
+}
+
+.tab-group {
+  max-width: 600px !important;
+  margin: auto;
+} 
+
+.example-form-field {
+  width: 45%;
 }
