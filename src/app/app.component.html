@@ -9,29 +9,10 @@
          routerLink="/signin" 
          routerLinkActive="active" >Sign In</a>
     </li>
-    <!-- <li class="nav-item" *ngIf="!isLoggedIn()">
-      <a class="nav-link" 
-         role="button" 
-         routerLink="/signup" 
-         routerLinkActive="active" >Sign Up</a>
-    </li> -->
     <div *ngIf="isLoggedIn()">
       <li>
-        <!-- Example single danger button -->
-        <!-- <div class="">
-          <button type="button" class="btn btn-secondary dropdown-toggle" (click)="toggleDropdown()" aria-expanded="false">
-            Manage
-          </button>
-          <div class="dropdown-menu" *ngIf="dropDown" [ngStyle]="{'display': dropdownOpen()}">
-            <a class="dropdown-item" (click)="toggleDropdown()" >New game</a>
-            <a class="dropdown-item" (click)="toggleDropdown()" routerLink="/history"  >History</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" (click)="toggleDropdown(); toggleLog()">Log Out</a>
-          </div>
-        </div> -->
         <button mat-button style="background:lightgray;" [matMenuTriggerFor]="menu">Manage</button>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item>New game</button>
           <button mat-menu-item routerLink="/history">History</button>
           <mat-divider></mat-divider>
           <button mat-menu-item (click)="toggleLog()" style="color: red">Log out</button>

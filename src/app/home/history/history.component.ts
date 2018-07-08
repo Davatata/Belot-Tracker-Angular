@@ -96,6 +96,7 @@ export class HistoryComponent implements OnInit {
 
   openGame(game, i) {
     this.selectedTab += 1;
+    this.changed = false;
     this.currentGameId = game.gameId;
 
     this.currentGame = Object.assign({}, game.value);
@@ -125,21 +126,7 @@ export class HistoryComponent implements OnInit {
     }
   }
 
-  updateScores(teams) {    
-    // this.currentGame.hands = this.currentGame.hands.map(hand => {
-    //   if (hand.bettor === teams.team1Name) {
-    //     if (hand.team1Score + hand.team1Bonus < hand.bet) {
-    //       hand.team1Sum = 0;
-    //       if (hand.special !== 'None') {
-    //         this.multiplier = hand.special === 'Coincher' ? 2 : 4
-    //       }
-    //       hand.team2Sum = hand.bet*this.multiplier + 
-    //     }
-    //   } else {
-    //   }
-    //   return hand;
-    // });
-    
+  updateScores() { 
     this.team1Total = this.currentGame.hands.map(hand => hand.team1Score).reduce((prev, next) => prev + next);
     this.team2Total = this.currentGame.hands.map(hand => hand.team2Score).reduce((prev, next) => prev + next);
   }
@@ -156,6 +143,7 @@ export class HistoryComponent implements OnInit {
   }
 
   openHand(hand, index) {
+    this.changed = false;
     this.selectedTab += 1;
     if (this.selectedTab > 2) this.selectedTab = 0;
     // this.editHand = true;
@@ -187,12 +175,12 @@ export class HistoryComponent implements OnInit {
 
   updateGame() {
     console.log('TestHand:' ,this.testHand);
-    this.currentGame.hands[this.handIndex] = this.testHand;
+    this.currentGame.hands[this.handIndex] = Object.assign({}, this.testHand);
     this.fixMissingScores();
     this.currentGame.teams.team1Name = this.team1;
     this.currentGame.teams.team2Name = this.team2;
     this.updateTeamNames();    
-    this.updateScores(this.currentGame.teams);
+    this.updateScores();
     this.currentGame.teams.team1Score = this.team1Total;
     this.currentGame.teams.team2Score = this.team2Total;
 
@@ -200,21 +188,45 @@ export class HistoryComponent implements OnInit {
                               this.currentGame.teams.team1Name : 
                               this.currentGame.teams.team2Name;
     this.updateBetAchieved(this.handIndex);
-    this.games[this.gameIndex].value = Object.assign({}, this.currentGame);
+    if (this.gameIndex < this.games.length) {
+      console.log('this.gameIndex < this.games.length');
+      // this.games[this.gameIndex].value = Object.assign({}, this.currentGame);
+    } else {
+      console.log('this.gameIndex >= this.games.length');
+      // this.games[this.gameIndex] = {value:null};
+    }  
+    
     console.log('New game: ', this.games[this.gameIndex]);
     // console.log(this.games);
-    this.httpService.updateGame(this.currentGame, this.currentGameId, this.gameIndex).subscribe(
-      (res:Game[]) => {
-        this.games.games = res;
-        this.changed = false;
-        // this.editHand = false;
-        this.newHand = false;
-        this.selectedTab = 1;
-        console.log('Response: ', res);
-        console.log('Updated games:', this.games)
-      },
-      (error) => console.log('Bad update games', error)
-    );
+    if (this.currentGameId) {
+      this.httpService.updateGame(this.currentGame, this.currentGameId, this.gameIndex).subscribe(
+        (res:Game) => {
+          this.getGames();
+          // this.games[this.gameIndex].value = res;
+          this.changed = false;
+          // this.editHand = false;
+          this.newHand = false;
+          this.selectedTab = 1;
+          console.log('Response: ', res);
+          console.log('Updated games:', this.games)
+        },
+        (error) => console.log('Bad update games', error)
+      );
+    } else {
+      this.httpService.postGame(this.currentGame).subscribe(
+        (res:any) => {
+          this.getGames();
+          this.changed = false;
+          this.newHand = false;
+          this.selectedTab = 1;
+          this.currentGameId = res.name;
+          console.log('Response: ', res);
+          console.log('Created games:', this.games)
+        },
+        (error) => console.log('Bad create game', error)
+      );
+    }
+    
   }
 
   tabChange(event) {
@@ -225,7 +237,7 @@ export class HistoryComponent implements OnInit {
   }
 
   indexChanged(event) {
-    console.log("Tab chosen:", event);
+    // console.log("Tab chosen:", event);
     // this.openGame(this.currentGameId, this.gameIndex);
   }
 
@@ -323,17 +335,31 @@ export class HistoryComponent implements OnInit {
   }
 
   createGame() {
-    // this.currentGame = {
-    //   gameId: number,
-    //   winner: string,
-    //   teams: { 
-    //     team1Name: string,
-    //     team2Name: string,
-    //     team1Score: number,
-    //     team2Score: number,
-    //   },
-    //   hands: Hand[]
-    // };
-    // this.createHand();
+    this.team1 = this.oldTeam1 = "";
+    this.team2 = this.oldTeam2 = "";
+    this.team1Total = 0;
+    this.team2Total = 0;
+    this.gameIndex = null;
+    this.currentGameId = null;
+    this.currentGame = Object.assign({},
+    {
+      winner: '',
+      teams: { 
+        team1Name: '',
+        team2Name: '',
+        team1Score: 0,
+        team2Score: 0,
+      },
+      hands: []
+    });
+    this.gameIndex = this.games.length;
+    this.createHand();
   }
+
+  checkNames() {
+    if (this.team1 !== this.oldTeam1 || this.team2 !== this.oldTeam2) {
+      this.changed = true;
+    }
+  }
+
 }

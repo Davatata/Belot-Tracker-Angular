@@ -11,17 +11,16 @@ import { Router } from '@angular/router';
 export class SignInComponent implements OnInit {
   email: string;
   password: string;
+  badSignIn: boolean = true;
   
   constructor(private httpService: HttpServiceService,
-              private router: Router) {
-    
-   }
+              private router: Router) {}
 
   ngOnInit() {
     this.httpService.user.subscribe(user => {
       if (user) {
         console.log(`Logged in, user data: ${this.httpService.userDetails.email.split('@')[0]}`);
-        this.router.navigate(['home']);
+        this.router.navigate(['history']);
       } else {
         console.log('Not logged in.');
       }

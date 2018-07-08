@@ -1,7 +1,6 @@
 import { Hand } from "./hand.model";
 
 export interface Game {
-  gameId: number,
   winner: string,
   teams: { 
     team1Name: string,

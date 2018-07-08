@@ -20,7 +20,7 @@ export class SignUpComponent implements OnInit {
     this.httpService.user.subscribe(user => {
       if (user) {
         console.log(`Logged in, user data: ${this.httpService.userDetails.email.split('@')[0]}`);
-        this.router.navigate(['home']);
+        this.router.navigate(['history']);
       } else {
         console.log('Not logged in.');
       }
