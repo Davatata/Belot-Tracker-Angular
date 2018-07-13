@@ -14,6 +14,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 import { AngularFireModule } from "angularfire2";
 import { AngularFireDatabaseModule } from "angularfire2/database";
@@ -63,6 +64,7 @@ const appRoutes: Routes = [
     MatTabsModule,
     MatFormFieldModule,
     MatSelectModule,
+    MatSlideToggleModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,

@@ -58,8 +58,12 @@ export class HttpServiceService implements OnDestroy {
     return this.http.post(this.dbRef + `games/${this.userId}.json`, game);
   }
 
-  updateGame(game, gameId, index) {
+  updateGame(game, gameId) {
     return this.http.put(this.dbRef + `games/${this.userId}/${gameId}.json`, game);
+  }
+
+  deleteGame(game) {
+    return this.http.delete(this.dbRef + `games/${this.userId}/${game.gameId}.json`);
   }
 
   isLoggedIn() {

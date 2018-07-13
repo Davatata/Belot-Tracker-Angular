@@ -33,3 +33,7 @@ table {
 .example-form-field {
   width: 45%;
 }
+
+#deleteModal {
+  background: rgba(0, 0, 0, 0.5);
+}

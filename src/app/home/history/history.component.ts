@@ -1,12 +1,9 @@
-import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { Observable } from "rxjs/Rx";
-
-import {MatIconRegistry} from '@angular/material';
 
 import { HttpServiceService } from "../../http-service.service";
 import { Hand } from "../../models/hand.model";
 import { Game } from "../../models/game.model";
-
 
 @Component({
   selector: 'app-history',
@@ -19,10 +16,13 @@ export class HistoryComponent implements OnInit {
   @Input() team1: string = 'A team';
   @Input() team2: string = 'B team';
   @Input() formHand: Hand;
+  @Output() deleteEvent: EventEmitter<any> = new EventEmitter();
+
   team1Total: number = 0;
   team2Total: number = 0;
   games: any = [];
   editMode = false;
+  confirmDelete: boolean = false;
   observable: Observable<number>;
   selectedTab = 0;
   currentGame: Game = null;
@@ -32,6 +32,10 @@ export class HistoryComponent implements OnInit {
   suits = ["None", "Club", "Diamond", "Heart", "Spade"];
   hands: Hand[] = [];
   gameIndex = null;
+  toDeleteIndex = null;
+  toDeleteTeams = null;
+  toDeleteHandIndex = null;
+  toDeleteHand = null;
   changed = false;
   oldTeam1: string;
   oldTeam2: string;
@@ -39,8 +43,13 @@ export class HistoryComponent implements OnInit {
   bettorArray: string[] = ['testA', 'testB'];
   multiplier = 1;
   gameGoal: number;
-  // editHand: boolean;
   newHand: boolean;
+  deletedItems: any = {
+    game: null,
+    gameIndex: null,
+    hand: null,
+    handIndex: null
+  };
 
   testHand: Hand = {
     bet: 80,
@@ -74,6 +83,14 @@ export class HistoryComponent implements OnInit {
     return "";
   }
 
+  toggleDelete() {
+    this.confirmDelete = !this.confirmDelete;
+  }
+
+  toggleEdit() {
+    this.editMode = !this.editMode;
+  }
+
   getGames() {    
     this.httpService.getGames().subscribe(
       (res) => {
@@ -88,14 +105,55 @@ export class HistoryComponent implements OnInit {
     );
   }
 
-  deleteGame(index:number) {
-    this.games.splice(index, 1);
-    //this.httpService.games = this.games;
-    console.log(`Deleting position ${index}`);
+  updateDeleteItems(teams, index) {
+    this.toDeleteIndex = index;
+    this.toDeleteTeams = teams;
+  }
+
+  updateDeleteHand(hand, index) {
+    this.toDeleteHandIndex = index;
+    this.toDeleteHand = hand;
+  }
+
+  deleteGame() {
+    let index = this.toDeleteIndex;
+    this.deletedItems.game = this.games.splice(index, 1)[0];
+    this.deletedItems.gameIndex = index;
+    console.log(`Deleting game at position ${index}`);
+    console.table(this.deletedItems.game);
+    this.toggleDelete();
+    this.toggleEdit();
+    this.httpService.deleteGame(this.deletedItems.game).subscribe(
+      (res) => {
+        console.log(res);
+      }, 
+      (err)=>{
+        console.log(err);
+      }
+    );
+  }
+
+  deleteHand() {
+    let index = this.toDeleteHandIndex
+    this.deletedItems.hand = this.currentGame.hands.splice(index, 1)[0];
+    this.deletedItems.handIndex = index;
+    this.updateScores();
+    this.updateWinner();
+    console.log(`Deleting hand at position ${index}`);
+    console.table(this.deletedItems.hand);
+    this.toggleDelete();
+    this.toggleEdit();
+    this.httpService.updateGame(this.currentGame, this.currentGameId).subscribe(
+      (res:Game) => {
+        this.getGames();
+        console.log('Hand removed.');
+      },
+      (error) => console.log('Error while updating hands:', error)
+    );
   }
 
   openGame(game, i) {
-    this.selectedTab += 1;
+    this.selectedTab = 1;
     this.changed = false;
     this.currentGameId = game.gameId;
 
@@ -105,9 +163,6 @@ export class HistoryComponent implements OnInit {
     this.team1Total = this.currentGame.teams.team1Score;
     this.team2Total = this.currentGame.teams.team2Score;
     console.log('currentGame set: ', this.currentGame);
-    if (this.selectedTab > 2) {
-      this.selectedTab = 0;
-    }
     if (!game.value.hands) {
       console.log("Bad hands: ", game.value.hands);
     }
@@ -118,17 +173,17 @@ export class HistoryComponent implements OnInit {
 
   updateTeamScores(teamNumber) {
     if (teamNumber === 1) {
-      // if (this.testHand.team1Score === null) this.testHand.team1Score = 0;
       this.testHand.team2Score = 162 - this.testHand.team1Score;
     } else {
-      // if (this.testHand.team2Score === null) this.testHand.team2Score = 0;
       this.testHand.team1Score = 162 - this.testHand.team2Score;
     }
   }
 
-  updateScores() { 
-    this.team1Total = this.currentGame.hands.map(hand => hand.team1Score).reduce((prev, next) => prev + next);
-    this.team2Total = this.currentGame.hands.map(hand => hand.team2Score).reduce((prev, next) => prev + next);
+  updateScores() {
+    this.team1Total = this.currentGame.hands.map(hand => hand.team1Score).reduce((prev, next) => prev + next, 0);
+    this.team2Total = this.currentGame.hands.map(hand => hand.team2Score).reduce((prev, next) => prev + next, 0);
+    this.currentGame.teams.team1Score = this.team1Total;
+    this.currentGame.teams.team2Score = this.team2Total;
   }
 
   updateMultiplier(value) {
@@ -144,9 +199,7 @@ export class HistoryComponent implements OnInit {
 
   openHand(hand, index) {
     this.changed = false;
-    this.selectedTab += 1;
-    if (this.selectedTab > 2) this.selectedTab = 0;
-    // this.editHand = true;
+    this.selectedTab = 2;
     this.handIndex = index;
     console.log('Test hand: Before assign', this.testHand, index);
     this.testHand = Object.assign({}, hand);
@@ -163,16 +216,6 @@ export class HistoryComponent implements OnInit {
     this.testHand = null;
   }
 
-  saveChanges() {
-    //console.log('Service games: ', this.httpService.games);
-    // this.currentGame.hands[i] = this.testHand;
-  }
-
-  saveGames() {
-    // this.games.hands = Object.assign({}, this.currentGame.hands);
-    // this.httpService.postGame(this.games);
-  }
-
   updateGame() {
     console.log('TestHand:' ,this.testHand);
     this.currentGame.hands[this.handIndex] = Object.assign({}, this.testHand);
@@ -180,31 +223,22 @@ export class HistoryComponent implements OnInit {
     this.currentGame.teams.team1Name = this.team1;
     this.currentGame.teams.team2Name = this.team2;
     this.updateTeamNames();    
-    this.updateScores();
-    this.currentGame.teams.team1Score = this.team1Total;
-    this.currentGame.teams.team2Score = this.team2Total;
+    this.updateScores();    
 
-    this.currentGame.winner = this.team1Total > this.team2Total ? 
-                              this.currentGame.teams.team1Name : 
-                              this.currentGame.teams.team2Name;
+    this.updateWinner();
     this.updateBetAchieved(this.handIndex);
     if (this.gameIndex < this.games.length) {
       console.log('this.gameIndex < this.games.length');
-      // this.games[this.gameIndex].value = Object.assign({}, this.currentGame);
     } else {
       console.log('this.gameIndex >= this.games.length');
-      // this.games[this.gameIndex] = {value:null};
     }  
     
     console.log('New game: ', this.games[this.gameIndex]);
-    // console.log(this.games);
     if (this.currentGameId) {
-      this.httpService.updateGame(this.currentGame, this.currentGameId, this.gameIndex).subscribe(
+      this.httpService.updateGame(this.currentGame, this.currentGameId).subscribe(
         (res:Game) => {
           this.getGames();
-          // this.games[this.gameIndex].value = res;
           this.changed = false;
-          // this.editHand = false;
           this.newHand = false;
           this.selectedTab = 1;
           console.log('Response: ', res);
@@ -229,16 +263,10 @@ export class HistoryComponent implements OnInit {
     
   }
 
-  tabChange(event) {
-    this.selectedTab = event.index;
-    if (event.index < 2) {
-      this.changed = false;
-    }
-  }
-
-  indexChanged(event) {
-    // console.log("Tab chosen:", event);
-    // this.openGame(this.currentGameId, this.gameIndex);
+  updateWinner() {
+    this.currentGame.winner = this.team1Total > this.team2Total ? 
+                              this.currentGame.teams.team1Name : 
+                              this.currentGame.teams.team2Name;
   }
 
   // when a team name is changed, change all instances
@@ -316,10 +344,8 @@ export class HistoryComponent implements OnInit {
 
   createHand() {
     this.handIndex = this.currentGame.hands.length;
-    // this.editHand = false;
     this.newHand = true;
-
-    this.selectedTab += 1;
+    this.selectedTab = 2;
     this.testHand.bet = 80;
     this.testHand.betAchieved = false;
     this.testHand.special = "";
@@ -359,7 +385,7 @@ export class HistoryComponent implements OnInit {
   checkNames() {
     if (this.team1 !== this.oldTeam1 || this.team2 !== this.oldTeam2) {
       this.changed = true;
-    }
+    } 
   }
 
 }
