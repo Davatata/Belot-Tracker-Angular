@@ -65,6 +65,9 @@ export class HistoryComponent implements OnInit {
     betAchieved: true
   };
 
+  betValues = [82, 90, 100, 110, 120, 130, 140, 150, 160, 250];
+  allTricks: boolean;
+
   constructor(private httpService: HttpServiceService, 
               private cd: ChangeDetectorRef) {}
 
@@ -122,7 +125,7 @@ export class HistoryComponent implements OnInit {
     console.log(`Deleting game at position ${index}`);
     console.table(this.deletedItems.game);
     this.toggleDelete();
-    this.toggleEdit();
+    // this.toggleEdit();
     this.httpService.deleteGame(this.deletedItems.game).subscribe(
       (res) => {
         console.log(res);
@@ -142,7 +145,7 @@ export class HistoryComponent implements OnInit {
     console.log(`Deleting hand at position ${index}`);
     console.table(this.deletedItems.hand);
     this.toggleDelete();
-    this.toggleEdit();
+    // this.toggleEdit();
     this.httpService.updateGame(this.currentGame, this.currentGameId).subscribe(
       (res:Game) => {
         this.getGames();
@@ -172,27 +175,77 @@ export class HistoryComponent implements OnInit {
   }
 
   updateTeamScores(teamNumber) {
+    this.allTricks = false;
+    
     if (teamNumber === 1) {
       this.testHand.team2Score = 162 - this.testHand.team1Score;
     } else {
       this.testHand.team1Score = 162 - this.testHand.team2Score;
     }
+
+    if (this.testHand.team1Score === 162 || this.testHand.team2Score === 162) {
+      this.allTricks = true;
+    }
   }
 
+  // TODO: update scores according to if bet was met or not.
   updateScores() {
-    this.team1Total = this.currentGame.hands.map(hand => hand.team1Score).reduce((prev, next) => prev + next, 0);
-    this.team2Total = this.currentGame.hands.map(hand => hand.team2Score).reduce((prev, next) => prev + next, 0);
+    let team1Name = this.currentGame.teams.team1Name;
+    let team2Name = this.currentGame.teams.team2Name;
+    let handBonus = 0;
+
+    this.currentGame.hands.map(hand => {
+      if (hand.special === "Sur-Coincher") { this.multiplier = 4; }
+      else if (hand.special === "Coincher") { this.multiplier = 2; }
+      else { this.multiplier = 1; }
+
+      if (hand.team1Score === 162 || hand.team2Score === 162) {
+        if (hand.bet === 250) {
+          handBonus = 250;
+        } else {
+          handBonus = 90;
+        }
+      }
+
+      if (hand.betAchieved) {
+        if (hand.bettor === team1Name) {
+          hand.team1Sum = (hand.bet * this.multiplier) + handBonus + hand.team1Score + hand.team1Bonus;
+          hand.team2Sum = hand.team2Score + hand.team2Bonus;
+        } else {
+          hand.team2Sum = (hand.bet * this.multiplier) + handBonus + hand.team2Score + hand.team2Bonus;
+          hand.team1Sum = hand.team1Score + hand.team1Bonus;
+        }
+      } else {
+        if (hand.bettor === team1Name) {
+          hand.team2Sum = 162 + (hand.bet * this.multiplier) + hand.team2Bonus;
+          hand.team1Sum = 0 + hand.team1Bonus;
+        } else {
+          hand.team1Sum = 162 + (hand.bet * this.multiplier) + hand.team1Bonus;
+          hand.team2Sum = 0 + hand.team2Bonus;
+        }
+      }
+      if(isNaN(hand.team1Sum)) {
+        hand.team1Sum = 0;
+      }
+      if(isNaN(hand.team2Sum)) {
+        hand.team2Sum = 0;
+      }
+    });
+    console.log('team1Name is: ', this.currentGame.teams[team1Name]);
+    console.log('team1Name is: ', this.currentGame.teams.team1Name);
+    this.team1Total = this.currentGame.hands.map(hand => hand.team1Sum).reduce((prev, next) => prev + next, 0);
+    this.team2Total = this.currentGame.hands.map(hand => hand.team2Sum).reduce((prev, next) => prev + next, 0);
     this.currentGame.teams.team1Score = this.team1Total;
     this.currentGame.teams.team2Score = this.team2Total;
   }
 
   updateMultiplier(value) {
-    if (value === "") {
-      this.multiplier = 1;
-    } else if (value === "Coincher") {
+    if (value === "Coincher") {
       this.multiplier = 2;
-    } else {
+    } else if (value === "Sur-Coincher") {
       this.multiplier = 4;
+    }  else {
+      this.multiplier = 1;
     }
     console.log('New multiplier: ', this.multiplier);
   }
@@ -210,8 +263,39 @@ export class HistoryComponent implements OnInit {
     console.log('Test hand: After assign', this.testHand, index);
     this.oldTeam1 = this.team1 = this.currentGame.teams.team1Name;
     this.oldTeam2 = this.team2 = this.currentGame.teams.team2Name;
+    this.tempHand = Object.assign({}, this.testHand);
   }
 
+  checkChange() {
+    if (this.newHand) { return; }
+    this.changed = false;
+    if (this.tempHand.bet !== this.testHand.bet) {
+      this.changed = true;
+      return;
+    } else if (this.tempHand.bettor !== this.testHand.bettor) {
+      this.changed = true;
+      return;
+    } else if (this.tempHand.special !== this.testHand.special) {
+      this.changed = true;
+      return;
+    } else if (this.tempHand.suit !== this.testHand.suit) {
+      this.changed = true;
+      return;
+    } else if (this.tempHand.team1Score !== this.testHand.team1Score) {
+      this.changed = true;
+      return;
+    } else if (this.tempHand.team2Score !== this.testHand.team2Score) {
+      this.changed = true;
+      return;
+    } else if (this.tempHand.team1Bonus !== this.testHand.team1Bonus) {
+      this.changed = true;
+      return;
+    } else if (this.tempHand.team2Bonus !== this.testHand.team2Bonus) {
+      this.changed = true;
+      return;
+    }
+  }
+  
   clearHand() {
     this.testHand = null;
   }
@@ -222,11 +306,12 @@ export class HistoryComponent implements OnInit {
     this.fixMissingScores();
     this.currentGame.teams.team1Name = this.team1;
     this.currentGame.teams.team2Name = this.team2;
-    this.updateTeamNames();    
+    this.updateTeamNames();
+
+    this.updateBetAchieved(this.handIndex);
     this.updateScores();    
 
     this.updateWinner();
-    this.updateBetAchieved(this.handIndex);
     if (this.gameIndex < this.games.length) {
       console.log('this.gameIndex < this.games.length');
     } else {
@@ -327,8 +412,8 @@ export class HistoryComponent implements OnInit {
       hand.bet = this.fixScoreItem(hand.bet, 80, 162);
       hand.team1Score = this.fixScoreItem(hand.team1Score, 0, 162);
       hand.team2Score = this.fixScoreItem(hand.team2Score, 0, 162);
-      hand.team1Bonus = this.fixScoreItem(hand.team1Bonus, 0, this.gameGoal);
-      hand.team2Bonus = this.fixScoreItem(hand.team2Bonus, 0, this.gameGoal);
+      // hand.team1Bonus = this.fixScoreItem(hand.team1Bonus, 0, this.gameGoal);
+      // hand.team2Bonus = this.fixScoreItem(hand.team2Bonus, 0, this.gameGoal);
       return hand;
     });
   }
@@ -345,13 +430,14 @@ export class HistoryComponent implements OnInit {
   createHand() {
     this.handIndex = this.currentGame.hands.length;
     this.newHand = true;
+    this.changed = true;
     this.selectedTab = 2;
-    this.testHand.bet = 80;
+    this.testHand.bet = null;
     this.testHand.betAchieved = false;
     this.testHand.special = "";
     this.testHand.suit = "None";
-    this.testHand.team1Score = 0;
-    this.testHand.team2Score = 0;
+    this.testHand.team1Score = null;
+    this.testHand.team2Score = null;
     this.testHand.team1Bonus = 0;
     this.testHand.team2Bonus = 0;
   }
@@ -380,12 +466,13 @@ export class HistoryComponent implements OnInit {
     });
     this.gameIndex = this.games.length;
     this.createHand();
+    this.newHand = false;
   }
 
   checkNames() {
     if (this.team1 !== this.oldTeam1 || this.team2 !== this.oldTeam2) {
       this.changed = true;
-    } 
+    }
   }
 
 }
