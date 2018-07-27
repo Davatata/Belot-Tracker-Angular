@@ -1,7 +1,7 @@
 <nav class="navbar  bg-dark navbar-dark">
-  <a class="navbar-brand text-white" routerLink="/home" >
+  <span class="navbar-brand text-white">
     <div *ngIf="isLoggedIn()">{{ (getUser() | async)?.email.split('@')[0] }}</div>
-  </a>
+  </span>
   <ul class="navbar-nav collapse ">
     <li class="nav-item" *ngIf="!isLoggedIn()">
       <a class="nav-link" 
@@ -12,9 +12,9 @@
     <div *ngIf="isLoggedIn()">
       <li>
         <button mat-button style="background:lightgray;" [matMenuTriggerFor]="menu">Manage</button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item routerLink="/history">History</button>
-          <mat-divider></mat-divider>
+        <mat-menu #menu="matMenu" style="width: 40px;">
+          <!-- <button mat-menu-item routerLink="/history">History</button> -->
+          <!-- <mat-divider></mat-divider> -->
           <button mat-menu-item (click)="toggleLog()" style="color: red">Log out</button>
         </mat-menu>
       </li>
