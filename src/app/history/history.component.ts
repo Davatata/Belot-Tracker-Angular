@@ -269,6 +269,7 @@ export class HistoryComponent implements OnInit {
     this.oldTeam1 = this.team1 = this.currentGame.teams.team1Name;
     this.oldTeam2 = this.team2 = this.currentGame.teams.team2Name;
     this.tempHand = Object.assign({}, this.testHand);
+    console.log(this.tempHand);
   }
 
   checkChange() {
@@ -470,7 +471,7 @@ export class HistoryComponent implements OnInit {
     });
     this.gameIndex = this.games.length;
     this.createHand();
-    this.newHand = false;
+    // this.newHand = false;
   }
 
   checkNames() {
