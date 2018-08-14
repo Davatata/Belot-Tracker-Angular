@@ -139,6 +139,7 @@ export class HistoryComponent implements OnInit {
   deleteHand() {
     let index = this.toDeleteHandIndex;
     this.deletedItems.hand = this.currentGame.hands.splice(index, 1)[0];
+    console.log(this.currentGame.hands);
     this.deletedItems.handIndex = index;
     this.updateScores();
     this.updateWinner();
@@ -237,7 +238,9 @@ export class HistoryComponent implements OnInit {
 
   // TODO: update scores according to if bet was met or not.
   updateScores() {
-    this.updateHandScore();
+    if (!this.confirmDelete) {
+      this.updateHandScore();
+    }
     this.team1Total = this.currentGame.hands.map(hand => hand.team1Sum).reduce((prev, next) => prev + next, 0);
     this.team2Total = this.currentGame.hands.map(hand => hand.team2Sum).reduce((prev, next) => prev + next, 0);
     this.currentGame.teams.team1Score = this.team1Total;
