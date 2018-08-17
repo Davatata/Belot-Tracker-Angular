@@ -47,7 +47,8 @@
       
       <button class="btn btn-primary" 
               (click)="signup(); f.reset()" 
-              [disabled]="!email || !password">Sign Up</button>
+              [disabled]="!email || !password || passwordInput.errors?.minlength || 
+                          !email.match('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')">Sign Up</button>
     </form>
   </div>
 </div>

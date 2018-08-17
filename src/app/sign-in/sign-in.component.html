@@ -49,9 +49,11 @@
           <a routerLink="/signup">New around here? Sign up</a>
       </div>
       
+      <!-- Pattern grabbed from https://angular-templates.io/tutorials/about/angular-forms-and-validations -->
       <button class="btn btn-primary" 
               (click)="login(); f.reset()" 
-              [disabled]="!email || !password">Log In</button>
+              [disabled]="!email || !password || passwordInput.errors?.minlength || 
+                          !email.match('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')">Log In</button>
     </form>
   </div>
 </div>
