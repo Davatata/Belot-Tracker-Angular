@@ -4,8 +4,8 @@
       role="dialog" 
       aria-labelledby="exampleModalLabel" 
       aria-hidden="true"
-      [style.display]="httpService.checkingUserInfo ? 'block' : 'none'">
-  <div class="modal-dialog" style="margin-top: 60%; text-align: -webkit-center;" role="document">
+      [style.display]="getCheckingUserInfo() ? 'block' : 'none'">
+  <div class="modal-dialog" style="margin-top: 40vh; text-align: -webkit-center;" role="document">
     <div class="modal-content" style="background-color: transparent; border: none;">
         <mat-progress-spinner
         class="example-margin"

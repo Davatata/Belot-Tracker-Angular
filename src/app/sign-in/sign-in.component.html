@@ -45,7 +45,7 @@
         </div>
       </div>
 
-      <div *ngIf="httpService.errorMessage !== null &&
+      <div *ngIf="getErrorMessage() !== null &&
                   password === null &&
                   email === null " class="alert alert-danger">
         <span>Invalid credentials.</span>

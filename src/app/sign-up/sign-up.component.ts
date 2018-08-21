@@ -12,6 +12,7 @@ export class SignUpComponent implements OnInit {
 
   email: string;
   password: string;
+  errorMessage: string;
 
   constructor(private httpService: HttpServiceService,
               private router: Router) { }
@@ -25,6 +26,11 @@ export class SignUpComponent implements OnInit {
         console.log('Not logged in.');
       }
     });
+  }
+
+  getErrorMessage() {
+    this.errorMessage = this.httpService.getErrorMessage();
+    return this.errorMessage;
   }
 
   signup() {

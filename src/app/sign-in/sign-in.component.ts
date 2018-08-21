@@ -31,4 +31,8 @@ export class SignInComponent implements OnInit {
     this.httpService.login(this.email, this.password);
     this.email = this.password = '';    
   }
+
+  getErrorMessage() {
+    return this.httpService.getErrorMessage();
+  }
 }

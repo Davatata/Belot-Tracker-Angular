@@ -17,4 +17,8 @@ export class SpinnerComponent implements OnInit {
   ngOnInit() {
   }
 
+  getCheckingUserInfo() {
+    return this.httpService.checkingUserInfo;
+  }
+
 }

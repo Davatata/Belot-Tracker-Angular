@@ -159,6 +159,10 @@ export class HttpServiceService implements OnDestroy {
     return this.http.post(this.dbRef + 'users.json', user);
   }
 
+  getErrorMessage() {
+    return this.errorMessage;
+  }
+
   ngOnDestroy() {
     // this.user.unsubscribe();
   }
