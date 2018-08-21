@@ -41,6 +41,12 @@
           </div>
         </div>
 
+        <div *ngIf="httpService.errorMessage !== null &&
+                password === null &&
+                email === null " class="alert alert-danger">
+        <span>{{httpService.errorMessage}}</span>
+        </div>
+      
       <div class="mt-3 mb-3">
           <a routerLink="/signin">Have an account? Sign in</a>
       </div>

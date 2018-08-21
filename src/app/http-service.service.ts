@@ -14,6 +14,8 @@ export class HttpServiceService implements OnDestroy {
   userDetails: firebase.User = null;
   token: string;
   userId: string;
+  checkingUserInfo: boolean = false;
+  errorMessage: string = null;
 
   constructor(
     private http: HttpClient,
@@ -68,6 +70,8 @@ export class HttpServiceService implements OnDestroy {
   }
 
   signup(email: string, password: string) {
+    this.checkingUserInfo = true;
+    this.errorMessage = null;
     this.firebaseAuth
       .auth
       .createUserWithEmailAndPassword(email, password)
@@ -77,23 +81,34 @@ export class HttpServiceService implements OnDestroy {
           .then(
             (token:string) => {
               this.token = token;
-              let user = {userId: this.userDetails.uid, email: this.userDetails.email};
-              this.createUser(user).subscribe(
-                (response) => console.log(response),
-                (error) => console.log(error)
-              );
+              let uid = null;
+              let email = null;
+              if (this.userDetails !== null) {
+                uid = this.userDetails.uid;
+                email = this.userDetails.email;
+              }
+              let user = {userId: uid, email: email};
+              // this.createUser(user).subscribe(
+              //   (response) => console.log(response),
+              //   (error) => console.log(error)
+              // );
               
             }
           )
         this.router.navigate(['history']);
+        this.checkingUserInfo = false;
         console.log('Success!', value);
       })
       .catch(err => {
+        this.checkingUserInfo = false;
+        this.errorMessage = err.message;
         console.log('Something went wrong:',err.message);
       });    
   }
 
   login(email: string, password: string) {
+    this.checkingUserInfo = true;
+    this.errorMessage = null;
     this.firebaseAuth
       .auth
       .signInWithEmailAndPassword(email, password)
@@ -104,12 +119,14 @@ export class HttpServiceService implements OnDestroy {
             (token:string) => {
               this.token = token;
               this.router.navigate(['history']);
+              this.checkingUserInfo = false;
               console.log('Nice, it worked!');
             }
-          )
-        
+          )        
       })
       .catch(err => {
+        this.checkingUserInfo = false;
+        this.errorMessage = err.message;
         console.log('Something went wrong:',err.message);
       });
   }

@@ -15,6 +15,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 import { AngularFireModule } from "angularfire2";
 import { AngularFireDatabaseModule } from "angularfire2/database";
@@ -30,6 +31,7 @@ import { environment } from '../environments/environment';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { HistoryComponent } from './history/history.component';
 import { ModalComponent } from './modal/modal.component';
+import { SpinnerComponent } from './spinner/spinner.component';
 
 const appRoutes: Routes = [
   { path: 'signup', component: SignUpComponent },
@@ -46,7 +48,8 @@ const appRoutes: Routes = [
     SignInComponent,
     PageNotFoundComponent,
     HistoryComponent,
-    ModalComponent
+    ModalComponent,
+    SpinnerComponent
   ],
   imports: [
     BrowserModule,
@@ -62,6 +65,8 @@ const appRoutes: Routes = [
     MatFormFieldModule,
     MatSelectModule,
     MatSlideToggleModule,
+    MatProgressSpinnerModule,
+    
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
