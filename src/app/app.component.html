@@ -1,12 +1,13 @@
 <nav class="navbar  bg-dark navbar-dark">
   <span class="navbar-brand text-white">
-    <div *ngIf="isLoggedIn()">{{ (getUser() | async)?.email.split('@')[0] }}</div>
+    <!-- <div *ngIf="isLoggedIn()">{{ (getUser() | async)?.email.split('@')[0] }}</div> -->
+    <div *ngIf="isLoggedIn()">NG-Belot</div>
   </span>
   <ul class="navbar-nav collapse ">
     <li class="nav-item" *ngIf="!isLoggedIn()">
-      <a class="nav-link" 
-         role="button" 
-         routerLink="/signin" 
+      <a class="nav-link"
+         role="button"
+         routerLink="/signin"
          routerLinkActive="active" >Sign In</a>
     </li>
     <div *ngIf="isLoggedIn()">
@@ -22,13 +23,13 @@
   </ul>
 </nav>
 <div class="container">
-  <app-spinner></app-spinner>  
+  <app-spinner></app-spinner>
   <!-- Modal -->
-  <div class="modal" 
-        id="exampleModal" 
-        tabindex="-1" 
-        role="dialog" 
-        aria-labelledby="exampleModalLabel" 
+  <div class="modal"
+        id="exampleModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
         aria-hidden="true"
         [style.display]="confirmLogOut ? 'block' : 'none'">
     <div class="modal-dialog" role="document">

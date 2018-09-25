@@ -1,7 +1,7 @@
 import { Component, Input, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
-import { HttpServiceService } from "../http-service.service";
+import { HttpServiceService } from '../http-service.service';
 
 @Component({
   selector: 'app-modal',
@@ -10,7 +10,7 @@ import { HttpServiceService } from "../http-service.service";
 })
 export class ModalComponent  {
 
-  @Input() confirmLogOut: boolean = false;
+  @Input() confirmLogOut = false;
 
   constructor(private httpService: HttpServiceService, public dialog: MatDialog) {}
 
@@ -22,7 +22,7 @@ export class ModalComponent  {
   }
 
   logout() {
-    this.toggleLog(); 
+    this.toggleLog();
     this.httpService.logout();
   }
 

@@ -1,9 +1,16 @@
-import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
-import { Observable } from "rxjs/Rx";
+import {
+  Component,
+  OnInit,
+  Input,
+  ChangeDetectorRef,
+  Output,
+  EventEmitter,
+  AfterViewChecked } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 
-import { HttpServiceService } from "../http-service.service";
-import { Hand } from "../models/hand.model";
-import { Game } from "../models/game.model";
+import { HttpServiceService } from '../http-service.service';
+import { Hand } from '../models/hand.model';
+import { Game } from '../models/game.model';
 
 @Component({
   selector: 'app-history',
@@ -11,25 +18,25 @@ import { Game } from "../models/game.model";
   styleUrls: ['./history.component.css']
 })
 
-export class HistoryComponent implements OnInit {
-  
-  @Input() team1: string = 'A team';
-  @Input() team2: string = 'B team';
+export class HistoryComponent implements OnInit, AfterViewChecked {
+
+  @Input() team1 = 'A team';
+  @Input() team2 = 'B team';
   @Input() formHand: Hand;
   @Output() deleteEvent: EventEmitter<any> = new EventEmitter();
 
-  team1Total: number = 0;
-  team2Total: number = 0;
+  team1Total = 0;
+  team2Total = 0;
   games: any = [];
   editMode = false;
-  confirmDelete: boolean = false;
+  confirmDelete = false;
   observable: Observable<number>;
   selectedTab = 0;
   currentGame: Game = null;
   currentGameId: any;
   currentHand: Hand = null;
   handIndex: number;
-  suits = ["None", "Club", "Diamond", "Heart", "Spade"];
+  suits = ['None', 'Club', 'Diamond', 'Heart', 'Spade'];
   hands: Hand[] = [];
   gameIndex = null;
   toDeleteIndex = null;
@@ -53,8 +60,8 @@ export class HistoryComponent implements OnInit {
 
   testHand: Hand = {
     bet: 80,
-    bettor: "BlankTeam",
-    suit: "None",
+    bettor: 'BlankTeam',
+    suit: 'None',
     team1Score: 82,
     team2Score: 80,
     team1Bonus: 1,
@@ -68,22 +75,22 @@ export class HistoryComponent implements OnInit {
   betValues = [82, 90, 100, 110, 120, 130, 140, 150, 160, 250];
   allTricks: boolean;
 
-  constructor(private httpService: HttpServiceService, 
+  constructor(private httpService: HttpServiceService,
               private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.getGames();
   }
 
-  ngAfterViewChecked() {   
-    this.cd.detectChanges();   
+  ngAfterViewChecked() {
+    this.cd.detectChanges();
   }
 
   titleCase(string) {
     if (string) {
       return string[0].toUpperCase() + string.slice(1);
     }
-    return "";
+    return '';
   }
 
   toggleDelete() {
@@ -94,15 +101,15 @@ export class HistoryComponent implements OnInit {
     this.editMode = !this.editMode;
   }
 
-  getGames() {    
+  getGames() {
     this.httpService.getGames().subscribe(
       (res) => {
         if (res === null) {
-          console.log("No games found.");
+          console.log('No games found.');
         } else {
           this.games = Object.entries(res).map(([gameId, value]) => ({gameId, value}));
           console.log('Get games:', this.games);
-        }        
+        }
       },
       (error) => console.log('Bad get games', error)
     );
@@ -119,7 +126,7 @@ export class HistoryComponent implements OnInit {
   }
 
   deleteGame() {
-    let index = this.toDeleteIndex;
+    const index = this.toDeleteIndex;
     this.deletedItems.game = this.games.splice(index, 1)[0];
     this.deletedItems.gameIndex = index;
     console.log(`Deleting game at position ${index}`);
@@ -129,15 +136,15 @@ export class HistoryComponent implements OnInit {
     this.httpService.deleteGame(this.deletedItems.game).subscribe(
       (res) => {
         console.log(res);
-      }, 
-      (err)=>{
+      },
+      (err) => {
         console.log(err);
       }
     );
   }
 
   deleteHand() {
-    let index = this.toDeleteHandIndex;
+    const index = this.toDeleteHandIndex;
     this.deletedItems.hand = this.currentGame.hands.splice(index, 1)[0];
     console.log(this.currentGame.hands);
     this.deletedItems.handIndex = index;
@@ -148,7 +155,7 @@ export class HistoryComponent implements OnInit {
     this.toggleDelete();
     // this.toggleEdit();
     this.httpService.updateGame(this.currentGame, this.currentGameId).subscribe(
-      (res:Game) => {
+      (res: Game) => {
         this.getGames();
         console.log('Hand removed.');
       },
@@ -169,16 +176,16 @@ export class HistoryComponent implements OnInit {
     this.team2Total = this.currentGame.teams.team2Score;
     console.log('currentGame set: ', this.currentGame);
     if (!game.value.hands) {
-      console.log("Bad hands: ", game.value.hands);
+      console.log('Bad hands: ', game.value.hands);
     }
-    
+
     this.gameIndex = i;
-    console.log('gameIndex: ', this.gameIndex)
+    console.log('gameIndex: ', this.gameIndex);
   }
 
   updateTeamScores(teamNumber) {
     this.allTricks = false;
-    
+
     if (teamNumber === 1) {
       this.testHand.team2Score = 162 - this.testHand.team1Score;
     } else {
@@ -190,16 +197,19 @@ export class HistoryComponent implements OnInit {
     }
   }
 
-  updateHandScore() {    
-    let team1Name = this.currentGame.teams.team1Name;
+  updateHandScore() {
+    const team1Name = this.currentGame.teams.team1Name;
     // let team2Name = this.currentGame.teams.team2Name;
     let handBonus = 0;
-    
-    let hand = Object.assign({}, this.currentGame.hands[this.handIndex]);
+
+    const hand = Object.assign({}, this.currentGame.hands[this.handIndex]);
 
     this.multiplier = 1;
-    if (hand.special === "Sur-Coincher") { this.multiplier = 4; }
-    else if (hand.special === "Coincher") { this.multiplier = 2; }
+    if (hand.special === 'Sur-Coincher') {
+      this.multiplier = 4;
+    } else if (hand.special === 'Coincher') {
+      this.multiplier = 2;
+    }
 
     if (hand.team1Score === 162 || hand.team2Score === 162) {
       if (hand.bet === 250) {
@@ -226,10 +236,10 @@ export class HistoryComponent implements OnInit {
         hand.team2Sum = 0 + hand.team2Bonus;
       }
     }
-    if(isNaN(hand.team1Sum)) {
+    if (isNaN(hand.team1Sum)) {
       hand.team1Sum = 0;
     }
-    if(isNaN(hand.team2Sum)) {
+    if (isNaN(hand.team2Sum)) {
       hand.team2Sum = 0;
     }
 
@@ -248,16 +258,16 @@ export class HistoryComponent implements OnInit {
   }
 
   updateMultiplier(value) {
-    if (value === "Coincher") {
+    if (value === 'Coincher') {
       this.multiplier = 2;
-    } else if (value === "Sur-Coincher") {
+    } else if (value === 'Sur-Coincher') {
       this.multiplier = 4;
     } else {
       this.multiplier = 1;
     }
     console.log('New multiplier: ', this.multiplier);
   }
-  
+
   openHand(hand, index) {
     this.changed = false;
     this.selectedTab = 2;
@@ -292,13 +302,13 @@ export class HistoryComponent implements OnInit {
       return;
     }
   }
-  
+
   clearHand() {
     this.testHand = null;
   }
 
   updateGame() {
-    console.log('TestHand:' ,this.testHand);
+    console.log('TestHand:' , this.testHand);
     this.currentGame.hands[this.handIndex] = Object.assign({}, this.testHand);
     this.fixMissingScores();
     this.currentGame.teams.team1Name = this.team1;
@@ -306,56 +316,56 @@ export class HistoryComponent implements OnInit {
     this.updateTeamNames();
 
     this.updateBetAchieved(this.handIndex);
-    this.updateScores();    
+    this.updateScores();
 
     this.updateWinner();
     // if (this.gameIndex < this.games.length) {
     //   console.log('this.gameIndex < this.games.length');
     // } else {
     //   console.log('this.gameIndex >= this.games.length');
-    // }  
-    
+    // }
+
     console.log('New game: ', this.games[this.gameIndex]);
     if (this.currentGameId) {
       this.httpService.updateGame(this.currentGame, this.currentGameId).subscribe(
-        (res:Game) => {
+        (res: Game) => {
           this.getGames();
           this.changed = false;
           this.newHand = false;
           this.selectedTab = 1;
           console.log('Response: ', res);
-          console.log('Updated games:', this.games)
+          console.log('Updated games:', this.games);
         },
         (error) => console.log('Bad update games', error)
       );
     } else {
       this.httpService.postGame(this.currentGame).subscribe(
-        (res:any) => {
+        (res: any) => {
           this.getGames();
           this.changed = false;
           this.newHand = false;
           this.selectedTab = 1;
           this.currentGameId = res.name;
           console.log('Response: ', res);
-          console.log('Created games:', this.games)
+          console.log('Created games:', this.games);
         },
         (error) => console.log('Bad create game', error)
       );
     }
-    
+
   }
 
   updateWinner() {
-    this.currentGame.winner = this.team1Total > this.team2Total ? 
-                              this.currentGame.teams.team1Name : 
+    this.currentGame.winner = this.team1Total > this.team2Total ?
+                              this.currentGame.teams.team1Name :
                               this.currentGame.teams.team2Name;
   }
 
   // when a team name is changed, change all instances
   updateTeamNames() {
-    let newTeam1 = this.currentGame.teams.team1Name;
-    let newTeam2 = this.currentGame.teams.team2Name;
-    
+    const newTeam1 = this.currentGame.teams.team1Name;
+    const newTeam2 = this.currentGame.teams.team2Name;
+
     this.currentGame.hands = this.currentGame.hands.map(hand => {
       if (hand.bettor === this.oldTeam1) {
         hand.bettor = newTeam1;
@@ -369,8 +379,8 @@ export class HistoryComponent implements OnInit {
   }
 
   updateBetAchieved(handIndex) {
-    let hand: Hand = this.currentGame.hands[handIndex];
-    let bettor = hand.bettor;
+    const hand: Hand = this.currentGame.hands[handIndex];
+    const bettor = hand.bettor;
     let achieved = false;
     if (bettor === this.currentGame.teams.team1Name) {
       if (hand.bet <= hand.team1Score + hand.team1Bonus) {
@@ -387,9 +397,9 @@ export class HistoryComponent implements OnInit {
   getColors(hand, teamNumber) {
     let styles = {};
     if (teamNumber === 1 && hand.bettor === this.currentGame.teams.team1Name) {
-      styles = {'background-color': hand.betAchieved ? '#acffac' : '#ffacac'}
+      styles = {'background-color': hand.betAchieved ? '#acffac' : '#ffacac'};
     } else if (teamNumber === 2 && hand.bettor === this.currentGame.teams.team2Name) {
-      styles = {'background-color': hand.betAchieved ? '#acffac' : '#ffacac'}
+      styles = {'background-color': hand.betAchieved ? '#acffac' : '#ffacac'};
     } else {
       styles = { 'background-color': 'none'};
     }
@@ -397,12 +407,15 @@ export class HistoryComponent implements OnInit {
   }
 
   addMissingProperties() {
-    if (!this.testHand.hasOwnProperty('team1Bonus'))
+    if (!this.testHand.hasOwnProperty('team1Bonus')) {
       this.testHand.team1Bonus = -1;
-    if (!this.testHand.hasOwnProperty('team2Bonus'))
+    }
+    if (!this.testHand.hasOwnProperty('team2Bonus')) {
       this.testHand.team2Bonus = -1;
-    if (!this.testHand.hasOwnProperty('special'))
+    }
+    if (!this.testHand.hasOwnProperty('special')) {
       this.testHand.special = '';
+    }
   }
 
   addMissingGameProperties(game: Game): Game {
@@ -424,7 +437,7 @@ export class HistoryComponent implements OnInit {
   }
 
   fixScoreItem(value, min, max): number {
-    if (typeof(value) !== "number" || value < min) {
+    if (typeof(value) !== 'number' || value < min) {
       return min;
     } else if (value > max) {
       return max;
@@ -433,7 +446,7 @@ export class HistoryComponent implements OnInit {
   }
 
   createHand() {
-    let [team1, team2] = [this.currentGame.teams.team1Name, this.currentGame.teams.team2Name];
+    const [team1, team2] = [this.currentGame.teams.team1Name, this.currentGame.teams.team2Name];
     if (team1) { this.team1 = team1; }
     if (team2) { this.team2 = team2; }
     this.handIndex = this.currentGame.hands.length ? this.currentGame.hands.length : 0;
@@ -442,8 +455,8 @@ export class HistoryComponent implements OnInit {
     this.selectedTab = 2;
     this.testHand.bet = null;
     this.testHand.betAchieved = false;
-    this.testHand.special = "";
-    this.testHand.suit = "None";
+    this.testHand.special = '';
+    this.testHand.suit = 'None';
     this.testHand.team1Score = null;
     this.testHand.team2Score = null;
     this.testHand.team1Bonus = 0;
@@ -451,12 +464,12 @@ export class HistoryComponent implements OnInit {
   }
 
   goodSize(teamName) {
-    return teamName.length > 9 ? teamName.substring(0,9)+'...' : teamName;
+    return teamName.length > 9 ? teamName.substring(0, 9) + '...' : teamName;
   }
 
   createGame() {
-    this.team1 = this.oldTeam1 = "";
-    this.team2 = this.oldTeam2 = "";
+    this.team1 = this.oldTeam1 = '';
+    this.team2 = this.oldTeam2 = '';
     this.team1Total = 0;
     this.team2Total = 0;
     this.gameIndex = null;
@@ -464,7 +477,7 @@ export class HistoryComponent implements OnInit {
     this.currentGame = Object.assign({},
     {
       winner: '',
-      teams: { 
+      teams: {
         team1Name: '',
         team2Name: '',
         team1Score: 0,

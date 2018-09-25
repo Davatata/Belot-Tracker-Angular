@@ -1,25 +1,26 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { HttpClient } from '@angular/common/http';
-import { Router } from "@angular/router";
+import { Router } from '@angular/router';
 import 'rxjs/add/operator/map';
 
 import { AngularFireDatabase, AngularFireList  } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
-import * as firebase from "firebase/app";
+import * as firebase from 'firebase/app';
 
 @Injectable()
-export class HttpServiceService implements OnDestroy {
+export class HttpServiceService implements OnInit, OnDestroy {
   user: Observable<firebase.User>;
   userDetails: firebase.User = null;
   token: string;
   userId: string;
-  checkingUserInfo: boolean = false;
+  checkingUserInfo = false;
   errorMessage: string = null;
+  dbRef = 'https://belot-tracker.firebaseio.com/';
 
   constructor(
     private http: HttpClient,
-    private router: Router, 
+    private router: Router,
     private firebaseAuth: AngularFireAuth,
     private db: AngularFireDatabase) {
       this.user = firebaseAuth.authState;
@@ -29,7 +30,7 @@ export class HttpServiceService implements OnDestroy {
             this.userDetails = user;
             this.userId = user.uid;
             this.token = user['qa'];
-            //console.log(this.userDetails);
+            // console.log(this.userDetails);
           } else {
             this.userDetails = null;
             this.userId = null;
@@ -41,13 +42,12 @@ export class HttpServiceService implements OnDestroy {
   ngOnInit() {
     this.firebaseAuth.auth.currentUser.getIdToken()
           .then(
-            (token:string) => {
-              this.token = token;           
+            (token: string) => {
+              this.token = token;
             }
-          )
+          );
   }
 
-  dbRef = 'https://belot-tracker.firebaseio.com/';
 
   postGame(game) {
     return this.http.post(this.dbRef + `games/${this.userId}.json?auth=${this.token}`, game);
@@ -79,22 +79,22 @@ export class HttpServiceService implements OnDestroy {
         // this.loggedIn = true;
         this.firebaseAuth.auth.currentUser.getIdToken()
           .then(
-            (token:string) => {
+            (token: string) => {
               this.token = token;
-              let uid = null;
-              let email = null;
-              if (this.userDetails !== null) {
-                uid = this.userDetails.uid;
-                email = this.userDetails.email;
-              }
-              let user = {userId: uid, email: email};
+              // let uid;
+              // let email;
+              // if (this.userDetails !== null) {
+              //   uid = this.userDetails.uid;
+              //   email = this.userDetails.email;
+              // }
+              // let user = {userId: uid, email: email};
               // this.createUser(user).subscribe(
               //   (response) => console.log(response),
               //   (error) => console.log(error)
               // );
-              
+
             }
-          )
+          );
         this.router.navigate(['history']);
         this.checkingUserInfo = false;
         console.log('Success!', value);
@@ -102,8 +102,8 @@ export class HttpServiceService implements OnDestroy {
       .catch(err => {
         this.checkingUserInfo = false;
         this.errorMessage = err.message;
-        console.log('Something went wrong:',err.message);
-      });    
+        console.log('Something went wrong:', err.message);
+      });
   }
 
   login(email: string, password: string) {
@@ -116,18 +116,18 @@ export class HttpServiceService implements OnDestroy {
         // this.loggedIn = true;
         this.firebaseAuth.auth.currentUser.getIdToken()
           .then(
-            (token:string) => {
+            (token: string) => {
               this.token = token;
               this.router.navigate(['history']);
               this.checkingUserInfo = false;
               console.log('Nice, it worked!');
             }
-          )        
+          );
       })
       .catch(err => {
         this.checkingUserInfo = false;
         this.errorMessage = err.message;
-        console.log('Something went wrong:',err.message);
+        console.log('Something went wrong:', err.message);
       });
   }
 
@@ -138,23 +138,23 @@ export class HttpServiceService implements OnDestroy {
     this.userDetails = null;
     this.token = null;
     this.userId = null;
-    //this.games = null;
+    // this.games = null;
     // console.log(this.userDetails);
   }
 
   getToken() {
     this.firebaseAuth.auth.currentUser.getIdToken()
       .then(
-        (token:string) => this.token = token
+        (token: string) => this.token = token
       );
     return this.token;
   }
 
   getGames() {
-    if (!this.userId) return;
+    if (!this.userId) { return; }
     return this.http.get(this.dbRef + `games/${this.userId}.json?auth=${this.token}`);
   }
-  
+
   createUser(user) {
     return this.http.post(this.dbRef + 'users.json', user);
   }

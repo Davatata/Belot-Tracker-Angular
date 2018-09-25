@@ -17,12 +17,12 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
-import { AngularFireModule } from "angularfire2";
-import { AngularFireDatabaseModule } from "angularfire2/database";
-import { AngularFireAuthModule } from "angularfire2/auth";
+import { AngularFireModule } from 'angularfire2';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireAuthModule } from 'angularfire2/auth';
 
-import { HttpServiceService } from "./http-service.service";
-import { AuthGuardService } from "./auth-guard.service";
+import { HttpServiceService } from './http-service.service';
+import { AuthGuardService } from './auth-guard.service';
 import { AppComponent } from './app.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { SignInComponent } from './sign-in/sign-in.component';
@@ -66,7 +66,6 @@ const appRoutes: Routes = [
     MatSelectModule,
     MatSlideToggleModule,
     MatProgressSpinnerModule,
-    
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,

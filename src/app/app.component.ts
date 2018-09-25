@@ -11,18 +11,18 @@ import { PostItem } from './models/postItemModel.model';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnDestroy {
-  private loading: boolean = false;
+  private loading = false;
   private list: Observable<PostItem>;
 
   email: string;
   password: string;
   page: string;
-  confirmLogOut: boolean = false;
-  dropDown: boolean = false;
+  confirmLogOut = false;
+  dropDown = false;
 
 
   constructor(private httpService: HttpServiceService) {}
-  
+
   toggleLog() {
     this.confirmLogOut = !this.confirmLogOut;
   }
@@ -36,7 +36,7 @@ export class AppComponent implements OnDestroy {
   }
 
   logout() {
-    this.toggleLog(); 
+    this.toggleLog();
     this.httpService.logout();
   }
 
@@ -51,5 +51,5 @@ export class AppComponent implements OnDestroy {
   ngOnDestroy() {
     console.log('App closed');
   }
-  
+
 }

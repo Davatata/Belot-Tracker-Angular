@@ -11,8 +11,7 @@ import { Router } from '@angular/router';
 export class SignInComponent implements OnInit {
   email: string;
   password: string;
-  badSignIn: boolean = true;
-  
+  badSignIn = true;
   constructor(private httpService: HttpServiceService,
               private router: Router) {}
 
@@ -29,7 +28,7 @@ export class SignInComponent implements OnInit {
 
   login() {
     this.httpService.login(this.email, this.password);
-    this.email = this.password = '';    
+    this.email = this.password = '';
   }
 
   getErrorMessage() {
