@@ -130,7 +130,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     this.deletedItems.game = this.games.splice(index, 1)[0];
     this.deletedItems.gameIndex = index;
     console.log(`Deleting game at position ${index}`);
-    console.table(this.deletedItems.game);
+    // console.table(this.deletedItems.game);
     this.toggleDelete();
     // this.toggleEdit();
     this.httpService.deleteGame(this.deletedItems.game).subscribe(
@@ -151,7 +151,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     this.updateScores();
     this.updateWinner();
     console.log(`Deleting hand at position ${index}`);
-    console.table(this.deletedItems.hand);
+    // console.table(this.deletedItems.hand);
     this.toggleDelete();
     // this.toggleEdit();
     this.httpService.updateGame(this.currentGame, this.currentGameId).subscribe(
