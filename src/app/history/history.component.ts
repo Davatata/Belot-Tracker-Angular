@@ -47,7 +47,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
   oldTeam1: string;
   oldTeam2: string;
   tempHand: Hand;
-  bettorArray: string[] = ['testA', 'testB'];
+  // bettorArray: string[] = ['testA', 'testB'];
   multiplier = 1;
   gameGoal: number;
   newHand: boolean;
@@ -72,7 +72,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     betAchieved: true
   };
 
-  betValues = [82, 90, 100, 110, 120, 130, 140, 150, 160, 250];
+  betValues = [82, 90, 100, 110, 120, 130, 140, 150, 162, 250];
   allTricks: boolean;
 
   constructor(private httpService: HttpServiceService,
@@ -107,7 +107,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
         if (res === null) {
           console.log('No games found.');
         } else {
-          this.games = Object.entries(res).map(([gameId, value]) => ({gameId, value}));
+          this.games = Object.entries(res).map(([gameId, value]) => ({gameId, value})).reverse();
           console.log('Get games:', this.games);
         }
       },
@@ -211,28 +211,39 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
       this.multiplier = 2;
     }
 
-    if (hand.team1Score === 162 || hand.team2Score === 162) {
-      if (hand.bet === 250) {
-        handBonus = 250;
+    let capot = 0;
+    // WORKING ON: adding 'Capot' option on betting (saying you'll take all tricks)
+    if (hand.bet === 250) {
+      if (hand.betAchieved) {
+        capot = 250;
       } else {
-        handBonus = 90;
+        capot = 412;
+      }
+    } else {
+      if (hand.team1Score === 162 || hand.team2Score === 162) {
+        if (hand.bet === 250) {
+          handBonus = 250;
+        } else {
+          handBonus = 90;
+        }
       }
     }
 
+    // TODO: Handle case when 'capot' is called, currently score is too high.
     if (hand.betAchieved) {
       if (hand.bettor === team1Name) {
-        hand.team1Sum = (hand.bet * this.multiplier) + handBonus + hand.team1Score + hand.team1Bonus;
+        hand.team1Sum = (hand.bet * this.multiplier) + capot + handBonus + hand.team1Score + hand.team1Bonus;
         hand.team2Sum = hand.team2Score + hand.team2Bonus;
       } else {
-        hand.team2Sum = (hand.bet * this.multiplier) + handBonus + hand.team2Score + hand.team2Bonus;
+        hand.team2Sum = (hand.bet * this.multiplier) + capot + handBonus + hand.team2Score + hand.team2Bonus;
         hand.team1Sum = hand.team1Score + hand.team1Bonus;
       }
     } else {
       if (hand.bettor === team1Name) {
-        hand.team2Sum = 162 + (hand.bet * this.multiplier) + hand.team2Bonus;
+        hand.team2Sum = 162 + (hand.bet * this.multiplier) + capot + hand.team2Bonus;
         hand.team1Sum = 0 + hand.team1Bonus;
       } else {
-        hand.team1Sum = 162 + (hand.bet * this.multiplier) + hand.team1Bonus;
+        hand.team1Sum = 162 + (hand.bet * this.multiplier) + capot + hand.team1Bonus;
         hand.team2Sum = 0 + hand.team2Bonus;
       }
     }
@@ -383,12 +394,24 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     const bettor = hand.bettor;
     let achieved = false;
     if (bettor === this.currentGame.teams.team1Name) {
-      if (hand.bet <= hand.team1Score + hand.team1Bonus) {
-        achieved = true;
+      if (hand.bet === 250) {
+        if (hand.team1Score === 162) {
+          achieved = true;
+        }
+      } else {
+        if (hand.bet <= hand.team1Score + hand.team1Bonus) {
+          achieved = true;
+        }
       }
     } else {
-      if (hand.bet <= hand.team2Score + hand.team2Bonus) {
-        achieved = true;
+      if (hand.bet === 250) {
+        if (hand.team1Score === 162) {
+          achieved = true;
+        }
+      } else {
+        if (hand.bet <= hand.team2Score + hand.team2Bonus) {
+          achieved = true;
+        }
       }
     }
     this.currentGame.hands[handIndex].betAchieved = achieved;
@@ -436,7 +459,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  fixScoreItem(value, min, max): number {
+  fixScoreItem(value: number, min: number, max: number): number {
     if (typeof(value) !== 'number' || value < min) {
       return min;
     } else if (value > max) {
