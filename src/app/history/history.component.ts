@@ -200,7 +200,6 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
   updateHandScore() {
     const team1Name = this.currentGame.teams.team1Name;
     // let team2Name = this.currentGame.teams.team2Name;
-    let handBonus = 0;
 
     const hand = Object.assign({}, this.currentGame.hands[this.handIndex]);
 
@@ -216,29 +215,20 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     if (hand.bet === 250) {
       if (hand.betAchieved) {
         capot = 250;
-      } else {
-        capot = 412;
-      }
-    } else {
-      if (hand.team1Score === 162 || hand.team2Score === 162) {
-        if (hand.bet === 250) {
-          handBonus = 250;
-        } else {
-          handBonus = 90;
-        }
       }
     }
 
     // TODO: Handle case when 'capot' is called, currently score is too high.
     if (hand.betAchieved) {
       if (hand.bettor === team1Name) {
-        hand.team1Sum = (hand.bet * this.multiplier) + capot + handBonus + hand.team1Score + hand.team1Bonus;
+        hand.team1Sum = (hand.bet * this.multiplier) + (capot ? capot : hand.team1Score) + hand.team1Bonus;
         hand.team2Sum = hand.team2Score + hand.team2Bonus;
       } else {
-        hand.team2Sum = (hand.bet * this.multiplier) + capot + handBonus + hand.team2Score + hand.team2Bonus;
+        hand.team2Sum = (hand.bet * this.multiplier) + (capot ? capot : hand.team2Score) + hand.team2Bonus;
         hand.team1Sum = hand.team1Score + hand.team1Bonus;
       }
     } else {
+      // console.log('bet failed', hand.bettor);
       if (hand.bettor === team1Name) {
         hand.team2Sum = 162 + (hand.bet * this.multiplier) + capot + hand.team2Bonus;
         hand.team1Sum = 0 + hand.team1Bonus;
