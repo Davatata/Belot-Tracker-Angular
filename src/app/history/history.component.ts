@@ -69,7 +69,8 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     team1Sum: 162,
     team2Sum: 80,
     special: '',
-    betAchieved: true
+    betAchieved: true,
+    capot: false
   };
 
   betValues = [82, 90, 100, 110, 120, 130, 140, 150, 162, 250];
@@ -212,7 +213,8 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
 
     let capot = 0;
     // WORKING ON: adding 'Capot' option on betting (saying you'll take all tricks)
-    if (hand.bet === 250) {
+    if (hand.capot) {
+      hand.bet = 250;
       if (hand.betAchieved) {
         capot = 250;
       }
@@ -294,6 +296,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
       this.tempHand.bettor !== this.testHand.bettor ||
       this.tempHand.special !== this.testHand.special ||
       this.tempHand.suit !== this.testHand.suit ||
+      this.tempHand.capot !== this.testHand.capot ||
       this.tempHand.team1Score !== this.testHand.team1Score ||
       this.tempHand.team2Score !== this.testHand.team2Score ||
       this.tempHand.team1Bonus !== this.testHand.team1Bonus ||
@@ -384,7 +387,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     const bettor = hand.bettor;
     let achieved = false;
     if (bettor === this.currentGame.teams.team1Name) {
-      if (hand.bet === 250) {
+      if (hand.capot) {
         if (hand.team1Score === 162) {
           achieved = true;
         }
@@ -394,8 +397,8 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
         }
       }
     } else {
-      if (hand.bet === 250) {
-        if (hand.team1Score === 162) {
+      if (hand.capot) {
+        if (hand.team2Score === 162) {
           achieved = true;
         }
       } else {
@@ -474,6 +477,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     this.testHand.team2Score = null;
     this.testHand.team1Bonus = 0;
     this.testHand.team2Bonus = 0;
+    this.testHand.capot = false;
   }
 
   goodSize(teamName) {
@@ -507,6 +511,10 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     if (this.team1 !== this.oldTeam1 || this.team2 !== this.oldTeam2) {
       this.changed = true;
     }
+  }
+
+  capotToggle() {
+    this.testHand.bet = 250;
   }
 
 }

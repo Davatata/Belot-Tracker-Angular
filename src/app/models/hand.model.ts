@@ -10,4 +10,5 @@ export interface Hand {
   team2Sum: number;
   special: string;
   betAchieved: boolean;
+  capot: boolean;
 }

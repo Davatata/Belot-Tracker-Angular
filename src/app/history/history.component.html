@@ -168,21 +168,30 @@
       </button>
     </mat-form-field>
 
+    <section class="capot-checkbox">
+      <mat-checkbox
+        matInput [(ngModel)]="testHand.capot"
+        (change)="capotToggle();checkChange();">Capot</mat-checkbox>
+    </section>
+
     <mat-form-field class="example-form-field">
-      <!-- <input placeholder="Bet"
+      <input placeholder="Bet"
              type="number"
              matInput
              [(ngModel)]="testHand.bet"
+             [disabled]="testHand.capot"
              (change)="checkChange();"
-             required/> -->
-      <mat-select placeholder="Bet" [(ngModel)]="testHand.bet"
+             required/>
+      <!-- <mat-select placeholder="Bet" [(ngModel)]="testHand.bet"
         (change)="checkChange();">
         <mat-option *ngFor="let bet of betValues" [value]="bet">{{bet === 250 ? 'Capot' : bet}}</mat-option>
-      </mat-select>
-      <!-- <button mat-button *ngIf="testHand.bet"
-              matSuffix mat-icon-button aria-label="Clear" (click)="testHand.bet='';checkChange();">
+      </mat-select> -->
+      <button mat-button *ngIf="testHand.bet"
+              matSuffix mat-icon-button aria-label="Clear"
+              [disabled]="testHand.capot"
+              (click)="testHand.bet='';checkChange();">
         <mat-icon>close</mat-icon>
-      </button> -->
+      </button>
     </mat-form-field>
 
     <mat-form-field class="example-form-field">

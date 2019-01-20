@@ -28,7 +28,7 @@ table {
 .tab-group {
   max-width: 600px !important;
   margin: auto;
-} 
+}
 
 .example-form-field {
   width: 45%;
@@ -36,4 +36,8 @@ table {
 
 #deleteModal {
   background: rgba(0, 0, 0, 0.5);
+}
+
+.capot-checkbox {
+  margin-left: 10vw;
 }
