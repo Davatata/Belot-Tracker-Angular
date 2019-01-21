@@ -25,6 +25,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
   @Input() formHand: Hand;
   @Output() deleteEvent: EventEmitter<any> = new EventEmitter();
 
+  scoreGoal = 0;
   team1Total = 0;
   team2Total = 0;
   games: any = [];
@@ -75,6 +76,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
 
   betValues = [82, 90, 100, 110, 120, 130, 140, 150, 162, 250];
   allTricks: boolean;
+  newGame = false;
 
   constructor(private httpService: HttpServiceService,
               private cd: ChangeDetectorRef) {}
@@ -492,6 +494,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     this.gameIndex = null;
     this.currentGameId = null;
     this.currentGame = Object.assign({},
+    this.newGame = true,
     {
       winner: '',
       teams: {

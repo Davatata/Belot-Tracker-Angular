@@ -41,3 +41,7 @@ table {
 .capot-checkbox {
   margin-left: 10vw;
 }
+
+.scoreFormField {
+  width: 90.5% !important;
+}

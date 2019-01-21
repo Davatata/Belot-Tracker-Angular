@@ -144,6 +144,25 @@
     </ng-template>
     <br>
     <!-- Form fields -->
+    <!-- <mat-form-field class="scoreFormField">
+      <input #scoreGoalInput
+              matInput
+              type="number"
+              placeholder="Score Goal"
+              [(ngModel)]="scoreGoal"
+              (keyup)="checkChange();"
+              min="1000"
+              required />
+      <button mat-button *ngIf="scoreGoal"
+              matSuffix mat-icon-button aria-label="Clear"
+              (click)="scoreGoal=''; changed=true;">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-error *ngIf="scoreGoal < 1000">
+        Minimum score: 1000
+      </mat-error>
+    </mat-form-field> -->
+
     <mat-form-field class="example-form-field">
       <input #nameInput1 matInput type="text" placeholder="Team 1"
               [(ngModel)]="team1"
